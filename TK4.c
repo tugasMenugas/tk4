@@ -220,8 +220,11 @@ void updateDataQtyBook() {
     updateStockBook(idx, books[idx].stock + newStock);
 
     FILE *fsBook = fopen("database\\books.txt", "w");
+
+    // Check apakah file exist 
     if(fsBook == NULL) {
         printf("failed open file!\n");
+        return;
     }
 
     for (int i = 0; i < bookCount; i++) {
@@ -255,6 +258,12 @@ void readDataBooks() {
     struct Book book;
     FILE *fs = fopen("database\\books.txt", "r");
 
+    // Check apakah file exist 
+    if(fs == NULL) {
+		printf("failed open file!\n");
+        return;
+	}
+
     while (!feof(fs)) {
         if (fscanf(fs, " %19[^,], %99[^,], %19[^,], %f, %d\n", book.code, book.name, book.type, &book.price, &book.stock) == 5) {
             addBook(book.code, book.name, book.type, book.price, book.stock);
@@ -287,8 +296,10 @@ void insertDataBook() {
 	struct Book book;
 	FILE *fs = fopen("database\\books.txt", "a");
 
+    // Check apakah file exist 
 	if(fs == NULL) {
 		printf("failed open file!\n");
+        return;
 	}
 	printf("================== Menu Input Data Buku ==================\n");
 
@@ -342,6 +353,8 @@ void deleteBook() {
     switch (choice) {
         case 1:
             FILE *fs = fopen("database\\books.txt", "w");
+
+            // Check apakah file exist 
             if (fs == NULL) {
                 printf("Gagal membuka file untuk penulisan.\n");
                 return;
@@ -365,6 +378,8 @@ void deleteBook() {
                 }
 
                 fs = fopen("database\\books.txt", "w");
+
+                // Check apakah file exist 
                 if (fs == NULL) {
                     printf("Gagal membuka file untuk penulisan.\n");
                     return;
@@ -444,8 +459,10 @@ void readDataTrx() {
 	char date[11], time[9];
     FILE *fs = fopen("database\\transactionHistory.txt", "r");
 
+    // Check apakah file exist 
 	if(fs == NULL){
 		printf("failed open file!\n");
+        return;
 	}
 
 	while (!feof(fs)) {
@@ -489,6 +506,8 @@ void deleteHistoryTransaction() {
     switch (choice) {
         case 1:
             FILE *fs = fopen("database\\transactionHistory.txt", "w");
+            
+            // Check apakah file exist 
             if (fs == NULL) {
                 printf("Gagal membuka file untuk penulisan.\n");
                 return;
@@ -512,6 +531,8 @@ void deleteHistoryTransaction() {
                 }
 
                 fs = fopen("database\\transactionHistory.txt", "w");
+                
+                // Check apakah file exist 
                 if (fs == NULL) {
                     printf("Gagal membuka file untuk penulisan.\n");
                     return;
@@ -555,6 +576,12 @@ void deleteHistoryTransaction() {
 
 int findMaxTrxNumber() {
 	FILE *file = fopen("database\\transactionHistory.txt", "r");
+
+    // Check apakah file exist 
+    if (file == NULL) {
+        printf("Gagal membuka file untuk penulisan.\n");
+        return 0;
+    }
 
     int maxTrxNumber = 0;
     char line[100];  // Sesuaikan dengan panjang maksimum baris dalam file
@@ -608,8 +635,11 @@ void buyBook() {
             updateStockBook(choice, books[choice].stock - newTrx.quantity);
 
             FILE *fsBook = fopen("database\\books.txt", "w");
+
+            // Check apakah file exist 
             if(fsBook == NULL) {
                 printf("failed open file!\n");
+                return;
             }
 
             for (int i = 0; i < bookCount; i++) {
@@ -619,8 +649,11 @@ void buyBook() {
             fclose(fsBook);
 
             FILE *fsTransaction = fopen("database\\transactionHistory.txt", "a");
+
+            // Check apakah file exist 
             if(fsTransaction == NULL) {
                 printf("failed open file!\n");
+                return;
             }
 
             
