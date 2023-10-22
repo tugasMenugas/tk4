@@ -18,6 +18,7 @@ struct Transaction {
 	char trxCode[10];
 	char bookName[100];
 	int quantity;
+    float totalPrice;
 };
 
 struct Book books[MAX_DATA]; 
@@ -26,7 +27,8 @@ int bookCount = 0;
 struct Transaction transactions[MAX_DATA];
 int trxCount = 0;
 
-
+// Prototype Helper function 
+// Start
 bool backToMenu();
 
 void toTitleCase(char *input);
@@ -34,7 +36,8 @@ void toTitleCase(char *input);
 void toUpperCase(char *str);
 
 bool isBookCodeExist(const char *code);
-
+// End
+// Prototype Helper function 
 
 // Prototype Function for book
 // Start
@@ -59,7 +62,7 @@ void deleteBook();
 
 // Prototype function for transaction
 // Start
-void addTrx(const char *trxCode, const char *bookName, int quantity);
+void addTrx(const char *trxCode, const char *bookName, int quantity, float totalPrice);
 
 void clearHistory();
 
@@ -128,6 +131,25 @@ int main()
 	return 0;
 }
 
+// Helper Function
+// Start
+
+bool backToMenu() {
+    printf("Back to menu ? :\n");
+    printf("1. Menu\n");
+    printf("2. Exit\n");
+    printf("Choice ? [1-2] : ");
+    int choice;
+    scanf("%d", &choice);
+    fflush(stdin);
+
+    switch (choice) {
+        case 1:
+            return true; // Kembali ke menu
+        default:
+            return false; // Keluar dari program
+    }
+}
 
 // function untuk merubah string menjadi Titlecase 
 void toTitleCase(char *input) {
@@ -164,6 +186,9 @@ bool isBookCodeExist(const char *code) {
     }
     return false;
 }
+// End
+// Helper Function
+
 
 // Book Section Code
 // Start
@@ -180,6 +205,31 @@ void addBook(const char *code, const char *name, const char *type, float price, 
 	} else {
 		printf("Jumlah buku yang dapat disimpan sudah tercapai!\n");
 	}
+}
+
+void updateDataQtyBook() {
+    int idx, newStock;
+    printf("==================== Menu Update Stock Buku ===================\n");
+    viewBooks();
+    printf("Masukan nomor buku\t: ");
+    scanf("%d", &idx);
+    idx--;
+
+    printf("Masukan jumlah stock\t: ");
+    scanf("%d", &newStock);
+    updateStockBook(idx, books[idx].stock + newStock);
+
+    FILE *fsBook = fopen("database\\books.txt", "w");
+    if(fsBook == NULL) {
+        printf("failed open file!\n");
+    }
+
+    for (int i = 0; i < bookCount; i++) {
+        fprintf(fsBook, "%s,%s,%s,%.2f,%d\n", books[i].code, books[i].name, books[i].type, books[i].price, books[i].stock);
+    }
+
+    fclose(fsBook);
+    printf("================== Berhasil Menambahkan Stock =================\n");
 }
 
 void updateStockBook(const int idx, int stock){
@@ -219,17 +269,17 @@ void readDataBooks() {
 
 void viewBooks() {
     readDataBooks();
-	printf("========================== Data Book ==========================\n");
-    printf("No.   %-8s %-17s %-7s %6s %14s\n", "Kode", "Nama", "Tipe", "Harga", "Stok");
-    printf("===============================================================\n");
+	printf("================================= Data Book =================================\n");
+    printf("No.   %-8s %-17s %-7s %14s %14s\n", "Kode", "Nama", "Tipe", "Harga", "Stok");
+    printf("=============================================================================\n");
     if(bookCount > 0) {
         for (int i = 0; i < bookCount; i++) {
-            printf("%d.   %-8s %-18s %-8s Rp.%12.2f %4d\n", i + 1, books[i].code, books[i].name, books[i].type, books[i].price, books[i].stock);
+            printf("%d.   %-8s %-18s %-8s %6s Rp.%.2f %8d\n", i + 1, books[i].code, books[i].name, books[i].type, " ", books[i].price, books[i].stock);
         }
     } else {
         printf("\t\t\t    No Data\n");
     }
-    printf("===============================================================\n");
+    printf("=============================================================================\n");
 }
 
 void insertDataBook() {
@@ -361,12 +411,13 @@ void deleteBook() {
 // Transaction Section Code
 // Start
 
-void addTrx(const char *trxCode, const char *bookName, int quantity) {
+void addTrx(const char *trxCode, const char *bookName, int quantity, float totalPrice) {
 	if(trxCount < MAX_DATA) {
 		struct Transaction trx;
 		strcpy(trx.trxCode, trxCode);
 		strcpy(trx.bookName, bookName);
 		trx.quantity = quantity;
+        trx.totalPrice = totalPrice;
 
 		transactions[trxCount++] = trx;
 	} else {
@@ -379,6 +430,7 @@ void clearHistory() {
         strcpy(transactions[i].bookName, "");
         strcpy(transactions[i].trxCode, "");
         transactions[i].quantity = 0;
+        transactions[i].totalPrice = 0.0;
     }
     
     trxCount = 0;
@@ -396,8 +448,8 @@ void readDataTrx() {
 	}
 
 	while (!feof(fs)) {
-		if (fscanf(fs, " %9[^,], %19[^,], %d", trx.trxCode, trx.bookName, &trx.quantity) == 3) {
-			addTrx(trx.trxCode, trx.bookName, trx.quantity);
+		if (fscanf(fs, " %9[^,], %19[^,], %d, %f\n", trx.trxCode, trx.bookName, &trx.quantity, &trx.totalPrice) == 4) {
+			addTrx(trx.trxCode, trx.bookName, trx.quantity, trx.totalPrice);
 		} else {
 			int c;
 			while ((c = fgetc(fs)) != '\n' && c != EOF);
@@ -409,23 +461,23 @@ void readDataTrx() {
 
 void viewHistoryTransaction() {
     readDataTrx();
-	printf("================ History ===============\n");
-    printf("No.   %-11s %-11s %8s\n", "Kode Trx", "Nama Buku", "Jumlah");
-    printf("========================================\n");
+	printf("=========================== History ===========================\n");
+    printf("No.   %-11s %-11s %8s %19s\n", "Kode Trx", "Nama Buku", "Jumlah", "Total Harga");
+    printf("===============================================================\n");
 
     if(trxCount > 0) {
         for (int i = 0; i < trxCount; i++) {
-            printf("%d.   %-12s %-12s %8d\n", i + 1, transactions[i].trxCode, transactions[i].bookName, transactions[i].quantity);
+            printf("%d.   %-12s %-12s %8d %6s Rp.%.2f\n", i + 1, transactions[i].trxCode, transactions[i].bookName, transactions[i].quantity, " ",transactions[i].totalPrice);
         }
     } else {
-        printf("\t\tNo Data\n");
+        printf("\t\t\t  No Data\n");
     }
 
-    printf("========================================\n");
+    printf("===============================================================\n");
 }
 
 void deleteHistoryTransaction() {
-	printf("\n============== Menu Delete History Transaction ================\n");
+	printf("\n================ Menu Delete History Transaction ==============\n");
     int choice;
     printf("1. Delete All Data\n");
     printf("2. Delete One Data\n");
@@ -470,7 +522,7 @@ void deleteHistoryTransaction() {
                     if (i == deletedIdx) {
                         deleted = 1;
                     } else {
-                        fprintf(fs, "%s,%s,%d\n", transactions[i].trxCode, transactions[i].bookName, transactions[i].quantity);
+                        fprintf(fs, "%s,%s,%d,%.2f\n", transactions[i].trxCode, transactions[i].bookName, transactions[i].quantity, transactions[i].totalPrice);
                     }
                 }
 
@@ -516,35 +568,10 @@ int findMaxTrxNumber() {
     return maxTrxNumber;
 }
 
-void updateDataQtyBook() {
-    int idx, newStock;
-    printf("==================== Menu Update Stock Buku ===================\n");
-    viewBooks();
-    printf("Masukan nomor buku\t: ");
-    scanf("%d", &idx);
-    idx--;
-
-    printf("Masukan jumlah stock\t: ");
-    scanf("%d", &newStock);
-    updateStockBook(idx, books[idx].stock + newStock);
-
-    FILE *fsBook = fopen("database\\books.txt", "w");
-    if(fsBook == NULL) {
-        printf("failed open file!\n");
-    }
-
-    for (int i = 0; i < bookCount; i++) {
-        fprintf(fsBook, "%s,%s,%s,%.2f,%d\n", books[i].code, books[i].name, books[i].type, books[i].price, books[i].stock);
-    }
-
-    fclose(fsBook);
-    printf("================== Berhasil Menambahkan Stock =================\n");
-}
-
 void buyBook() {
 	int choice;
 	int quantity;
-	printf("===================== Menu Pembelian Buku =====================\n\n");
+	printf("============================ Menu Pembelian Buku ============================\n\n");
     bool buyAgain = true;
     do {
         viewBooks();
@@ -574,8 +601,9 @@ void buyBook() {
             sprintf(newTrx.trxCode, "TRX%04d", maxTrxNumber);
             strcpy(newTrx.bookName, books[choice].name);
             newTrx.quantity = quantity;
+            newTrx.totalPrice = quantity * books[choice].price;
 
-            addTrx(newTrx.bookName, newTrx.trxCode, newTrx.quantity);
+            addTrx(newTrx.bookName, newTrx.trxCode, newTrx.quantity, newTrx.totalPrice);
             updateStockBook(choice, books[choice].stock - newTrx.quantity);
 
             FILE *fsBook = fopen("database\\books.txt", "w");
@@ -595,7 +623,7 @@ void buyBook() {
             }
 
             
-            fprintf(fsTransaction, "%s,%s,%d\n", newTrx.trxCode, newTrx.bookName, newTrx.quantity);
+            fprintf(fsTransaction, "%s,%s,%d,%.2f\n", newTrx.trxCode, newTrx.bookName, newTrx.quantity, newTrx.totalPrice);
             fclose(fsTransaction);
 
             printf("Ingin membeli lagi ? [y\\n] : ");
@@ -610,26 +638,9 @@ void buyBook() {
 
     } while (buyAgain);
 
-    printf("==================== Berhasil membeli buku!====================\n");
-    printf("===============================================================\n");
+    printf("=========================== Berhasil membeli buku! ==========================\n");
+    printf("=============================================================================\n");
 }
 
 // End
 // Transaction Section Code
-
-bool backToMenu() {
-    printf("Back to menu ? :\n");
-    printf("1. Menu\n");
-    printf("2. Exit\n");
-    printf("Choice ? [1-2] : ");
-    int choice;
-    scanf("%d", &choice);
-    fflush(stdin);
-
-    switch (choice) {
-        case 1:
-            return true; // Kembali ke menu
-        default:
-            return false; // Keluar dari program
-    }
-}
