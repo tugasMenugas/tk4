@@ -1,0 +1,6 @@
+TRX0001,Naruto,1
+TRX0002,Naruto,1
+TRX0004,Kaijuu 8,1
+TRX0005,Naruto,1
+TRX0006,Naruto,1
+TRX0007,Kaijuu 8,10
