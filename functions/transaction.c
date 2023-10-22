@@ -8,6 +8,8 @@ int trxCount = 0;
 
 
 // Transaction Section Code
+
+// Adds a transaction to the list of transactions.
 void addTrx(const char *trxCode, const char *bookName, int quantity, float totalPrice) {
 	if(trxCount < MAX_DATA) {
 		struct Transaction trx;
@@ -22,6 +24,8 @@ void addTrx(const char *trxCode, const char *bookName, int quantity, float total
 	}
 }
 
+// Clears the transaction history by resetting all elements in the transactions array 
+// and resetting the transaction count.
 void clearHistory() {
     for (int i = 0; i < trxCount; i++) {    
         strcpy(transactions[i].bookName, "");
@@ -33,6 +37,7 @@ void clearHistory() {
     trxCount = 0;
 }
 
+// Reads transaction data from the file and populates the transactions array.
 void readDataTrx() {
 	clearHistory();
 	int i = 0;
@@ -58,6 +63,7 @@ void readDataTrx() {
     fclose(fs);
 }
 
+// Displays the transaction history.
 void viewHistoryTransaction() {
     readDataTrx();
 	printf("=========================== History ===========================\n");
@@ -75,6 +81,7 @@ void viewHistoryTransaction() {
     printf("===============================================================\n");
 }
 
+// Provides options to delete transaction records.
 void deleteHistoryTransaction() {
 	printf("\n================ Menu Delete History Transaction ==============\n");
     int choice;
@@ -155,6 +162,7 @@ void deleteHistoryTransaction() {
     }
 }
 
+// Finds the maximum transaction number in the transaction history file.
 int findMaxTrxNumber() {
 	FILE *file = fopen("database\\transactionHistory.txt", "r");
 
@@ -177,6 +185,7 @@ int findMaxTrxNumber() {
     return maxTrxNumber;
 }
 
+// Process of buying books.
 void buyBook() {
 	int choice;
 	int quantity;

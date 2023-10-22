@@ -6,11 +6,11 @@
 #define MAX_DATA 100
 
 struct Book {
-    char code[20];
-    char name[100];
-    char type[20];
-    float price;
-    int stock;
+    char code[20];   // Unique identifier for the book
+    char name[100];  // Name/title of the book
+    char type[20];   // Category or genre of the book
+    float price;     // Price of the book
+    int stock;       // Available stock/quantity of the book
 };
 
 extern struct Book books[MAX_DATA];

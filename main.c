@@ -12,7 +12,7 @@
 // Prototype Helper function 
 bool backToMenu();
 
-
+// Main Function
 int main()
 {
 	while (true) {
@@ -65,7 +65,7 @@ int main()
 	return 0;
 }
 
-// Helper Function
+// Function untuk menanyakan user kembali ke menu atau keluar
 bool backToMenu() {
     printf("Back to menu ? :\n");
     printf("1. Menu\n");

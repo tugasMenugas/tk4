@@ -6,10 +6,10 @@
 #define MAX_DATA 100
 
 struct Transaction {
-    char trxCode[10];
-    char bookName[100];
-    int quantity;
-    float totalPrice;
+    char trxCode[10];      // Transaction code (e.g., TRX0001)
+    char bookName[100];    // Name of the purchased book
+    int quantity;          // Quantity of books purchased
+    float totalPrice;      // Total price of the transaction
 };
 
 extern struct Transaction transactions[MAX_DATA];

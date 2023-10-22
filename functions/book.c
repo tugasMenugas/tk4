@@ -6,6 +6,7 @@
 struct Book books[MAX_DATA];
 int bookCount = 0;
 
+// Checks if a book with the given code already exists in the system.
 bool isBookCodeExist(const char *code) {
     for (int i = 0; i < bookCount; i++) {
         if (strcmp(code, books[i].code) == 0) {
@@ -15,6 +16,7 @@ bool isBookCodeExist(const char *code) {
     return false;
 }
 
+// Adds a new book to the system.
 void addBook(const char *code, const char *name, const char *type, float price, int stock) {
 	if(bookCount < MAX_DATA) {
 		struct Book newBook;
@@ -29,6 +31,7 @@ void addBook(const char *code, const char *name, const char *type, float price, 
 	}
 }
 
+// Allows the user to update the data quantity of a book.
 void updateDataQtyBook() {
     int idx, newStock;
     printf("==================== Menu Update Stock Buku ===================\n");
@@ -57,11 +60,13 @@ void updateDataQtyBook() {
     printf("================== Berhasil Menambahkan Stock =================\n");
 }
 
+// Update stock of a book
 void updateStockBook(const int idx, int stock){
 	struct Book *book = &books[idx];
 	book->stock = stock;
 }
 
+// Clears all book data by resetting the books array and book count (bookCount).
 void clearBooks() {
     for (int i = 0; i < bookCount; i++) {    
         strcpy(books[i].code, "");
@@ -74,6 +79,8 @@ void clearBooks() {
     bookCount = 0;
 }
 
+// Reads information about books stored in a file and 
+// fills up the books array with data.
 void readDataBooks() {
 	clearBooks();
     int i = 0;
@@ -98,6 +105,7 @@ void readDataBooks() {
     fclose(fs);
 }
 
+// Displays a list of available books.
 void viewBooks() {
     readDataBooks();
 	printf("================================= Data Book =================================\n");
@@ -113,6 +121,7 @@ void viewBooks() {
     printf("=============================================================================\n");
 }
 
+// Allows the user to input book data.
 void insertDataBook() {
     readDataBooks();
 	struct Book book;
@@ -163,6 +172,7 @@ void insertDataBook() {
 	printf("================ Successfully insert data ================\n");
 }
 
+// Provides options to delete book records.
 void deleteBook() {
     printf("\n====================== Menu Delete Book =======================\n");
     int choice;
@@ -243,7 +253,7 @@ void deleteBook() {
     }
 }
 
-// function untuk merubah string menjadi Titlecase 
+// Converts a string to title case.
 void toTitleCase(char *input) {
 	int length = strlen(input);
     bool capitalizeNext = true;
@@ -264,6 +274,7 @@ void toTitleCase(char *input) {
     }
 }
 
+// Converts a string to uppercase.
 void toUpperCase(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = toupper((unsigned char)str[i]);
