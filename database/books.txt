@@ -1,2 +1,2 @@
-KJ,Kaijuu 8,MG,23000.00,58
+KJ,Kaijuu 8,MG,23000.00,55
 NR,Naruto,Manga,28000.00,5

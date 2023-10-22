@@ -405,6 +405,7 @@ void deleteBook() {
             break;
     }
 }
+
 // End
 // Book Section Code
 
@@ -625,6 +626,11 @@ void buyBook() {
             
             fprintf(fsTransaction, "%s,%s,%d,%.2f\n", newTrx.trxCode, newTrx.bookName, newTrx.quantity, newTrx.totalPrice);
             fclose(fsTransaction);
+
+            printf("\nBuku yang dibeli\t: \n");
+            printf("Nama\t\t\t: %s\n", newTrx.bookName);
+            printf("Jumlah\t\t\t: %d\n", newTrx.quantity);
+            printf("Total\t\t\t: Rp.%.2f\n\n", newTrx.totalPrice);
 
             printf("Ingin membeli lagi ? [y\\n] : ");
             char choice;
